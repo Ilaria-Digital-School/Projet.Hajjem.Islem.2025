@@ -1,16 +1,17 @@
 <?php
-session_start(); // Démarre la session pour accéder aux variables de session
+session_start(); // Démarre la session pour gérer les données utilisateur
 
 include 'components/connect.php'; // Inclut le fichier de connexion à la base de données
 
-// Vérifie si l'utilisateur est connecté en regardant s'il y a un ID en session
-if (!isset($_SESSION['id'])) {
-    header('Location: index.php'); // Redirige vers la page d'accueil si l'utilisateur n'est pas connecté
-    exit; // Stoppe l'exécution du script
-}
+// Vérifie si un cookie 'user_id' existe
+if(isset($_COOKIE['user_id'])){
+   $user_id = $_COOKIE['user_id']; // Récupère l'ID utilisateur depuis le cookie
+}else{
+   // Sinon, crée un cookie 'user_id' avec un identifiant unique valable 30 jours
+   setcookie('user_id', create_unique_id(), time() + 60*60*24*30, '/');
+   header('location:index.php'); // Redirige vers la page d'accueil après création du cookie
+}   
 
-// Récupère l'ID de l'utilisateur depuis la session
-$user_id = $_SESSION['id'];
 
 // Si le formulaire de vérification de disponibilité est soumis
 if(isset($_POST['check']))
